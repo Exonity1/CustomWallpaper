@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">EXO Live Wallpaper</string>
     <string name="wallpaper_name">EXO Efficient Wallpaper</string>
-    <string name="wallpaper_description">Battery-efficient live wallpaper template with home and lock screen rendering states.</string>
+    <string name="wallpaper_description">Lightweight live wallpaper: green on the home screen and red on the lock screen.</string>
     <string name="launcher_hint">Open the Android live wallpaper picker and select this template.</string>
     <string name="open_wallpaper_picker">Open wallpaper picker</string>
 </resources>
