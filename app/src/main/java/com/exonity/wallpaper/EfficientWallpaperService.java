@@ -2,7 +2,10 @@ package com.exonity.wallpaper;
 
 import android.app.KeyguardManager;
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.service.wallpaper.WallpaperService;
@@ -22,16 +25,45 @@ public final class EfficientWallpaperService extends WallpaperService {
         private int wallpaperFlags;
         private boolean surfaceReady;
 
+        // Receiver deklarieren
+        private BroadcastReceiver stateReceiver;
+
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
             surfaceHolder = holder;
             wallpaperFlags = getWallpaperFlags();
             setTouchEventsEnabled(false);
+
+            // Receiver initialisieren und registrieren
+            stateReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (Intent.ACTION_USER_PRESENT.equals(action) ||
+                            Intent.ACTION_SCREEN_OFF.equals(action)) {
+                        // Sobald entsperrt oder Bildschirm aus: Neu zeichnen!
+                        drawColor();
+                    }
+                }
+            };
+
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_USER_PRESENT); // Gerät wurde entsperrt
+            filter.addAction(Intent.ACTION_SCREEN_OFF);   // Bildschirm ging aus
+
+            // Wichtig: Den Receiver über den Context des Services registrieren
+            EfficientWallpaperService.this.registerReceiver(stateReceiver, filter);
         }
 
         @Override
         public void onDestroy() {
+            // Receiver wieder abmelden, um Memory Leaks zu vermeiden
+            if (stateReceiver != null) {
+                EfficientWallpaperService.this.unregisterReceiver(stateReceiver);
+                stateReceiver = null;
+            }
+
             surfaceReady = false;
             surfaceHolder = null;
             super.onDestroy();
