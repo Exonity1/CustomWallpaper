@@ -19,3 +19,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
+dependencies {
+    implementation 'com.google.android.filament:filament-android:1.56.0'
+    implementation 'com.google.android.filament:gltfio-android:1.56.0'
+}
+
